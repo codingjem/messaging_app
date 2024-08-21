@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { userSlice } from "../features/user/userSlice";
+import { userApiSlice } from "../features/user/userApiSlice";
 
 export default configureStore({
-    reducer: { [userSlice.reducerPath]: userSlice.reducer },
+    reducer: { [userApiSlice.reducerPath]: userApiSlice.reducer },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(userSlice.middleware),
+        getDefaultMiddleware().concat(userApiSlice.middleware),
 });
+
+// if you add another rtk query for example for posts, just add this on the end of the concat ---> .concat(postSlice.middleware)

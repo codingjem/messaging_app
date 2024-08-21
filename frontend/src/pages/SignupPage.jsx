@@ -3,136 +3,82 @@ import "./SignupPage.css";
 import { useState } from "react";
 import { useCreateUserMutation } from "../features/user/userApiSlice";
 
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import MyTextInput from "../components/input_fields/MyTextInput";
+
 const SignupPage = () => {
     const [createUser, { data, error, isLoading }] = useCreateUserMutation();
-    const [newUserData, setNewUserData] = useState({
-        firstname: "",
-        lastname: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-    });
-    const [errorMessage, setErrorMessage] = useState({
-        firstnameError: "",
-        lastnameError: "",
-        emailError: "",
-        passwordError: "",
-        confirmPasswordError: "",
-    });
-
-    if (error) {
-        console.log(error);
-        return <h1>Error</h1>;
-    }
-
-    if (isLoading) {
-        return <h1>Loading ...</h1>;
-    }
-
-    if (data) {
-        console.log("User Created!", data);
-    }
-
-    const validateInput = async (e) => {
-        const { name, value } = e.target;
-        setNewUserData((prevState) => ({ ...prevState, [name]: value }));
-    };
-
-    useEffect(() => {
-        const nonEmptyFields = Object.entries(newUserData).filter(
-            ([key, value]) => value.trim() !== ""
-        );
-        const dataToSend = Object.fromEntries(nonEmptyFields);
-        if (Object.keys(dataToSend).length > 0) {
-            console.log("NEW USER", dataToSend);
-        }
-        // CREATE FRONTEND VALIDATIONS HERE!!!!! use FORMIK + YUP, read documentation. 
-    }, [newUserData]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const form = document.getElementById("signupForm");
-        const formData = new FormData(form);
-        const formDataObj = {};
-
-        // Turn to an object accepted by useState
-        formData.forEach((value, key) => {
-            formDataObj[key] = value;
-        });
-
-        // Frontend Validations
-        if (formDataObj.password !== formDataObj.confirmPassword) {
-            setErrorMessage((prevState) => ({
-                ...prevState,
-                passwordError: "Password do not match!",
-                confirmPasswordError: "Password do not match!",
-            }));
-            return;
-        }
-
-        // console.log("FORM DATA", formDataObj);
-        // console.log("ERROR DATA", errorMessage);
-        setNewUserData(formDataObj);
-    };
-
     return (
-        <section id="signup">
-            <h1>Small Circle</h1>
-            <form id="signupForm" onSubmit={handleSubmit}>
-                <input
+        <Formik
+            initialValues={{
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+            }}
+            validationSchema={Yup.object({
+                firstName: Yup.string()
+                    .max(15, "Must be 15 characters or less")
+                    .required("Required"),
+                lastName: Yup.string()
+                    .max(20, "Must be 20 characters or less")
+                    .required("Required"),
+                email: Yup.string()
+                    .email("Invalid email address")
+                    .required("Required"),
+                password: Yup.string()
+                    .min(8, "Password must be at least 8 characters")
+                    .required("Required"),
+                confirmPassword: Yup.string()
+                    .oneOf([Yup.ref("password")], "Passwords must match")
+                    .required("Required"),
+            })}
+            onSubmit={async (values, { setSubmitting, resetForm }) => {
+                try {
+                    // await createUser(values).unwrap();
+                    console.log("VALUES", values);
+                } catch (err) {
+                    console.error("Error", err);
+                } finally {
+                    setSubmitting(false);
+                }
+            }}
+        >
+            <Form className="signup-form">
+                <MyTextInput
+                    name="firstName"
                     type="text"
-                    name="firstname"
-                    id="firstname"
                     placeholder="First Name"
-                    value={newUserData.firstname}
-                    onChange={validateInput}
                 />
-                <input
+
+                <MyTextInput
+                    name="lastName"
                     type="text"
-                    name="lastname"
-                    id="lastname"
                     placeholder="Last Name"
-                    value={newUserData.lastname}
-                    onChange={validateInput}
                 />
-                <input
-                    type="email"
+
+                <MyTextInput
                     name="email"
-                    id="email"
-                    placeholder="Email"
-                    value={newUserData.email}
-                    onChange={validateInput}
+                    type="email"
+                    placeholder="Email Address"
                 />
-                <input
-                    type="password"
+
+                <MyTextInput
                     name="password"
-                    id="password"
-                    placeholder="Password"
-                    value={newUserData.password}
-                    onChange={validateInput}
-                />
-                <input
                     type="password"
+                    placeholder="Password"
+                />
+                <MyTextInput
                     name="confirmPassword"
-                    id="confirmPassword"
+                    type="password"
                     placeholder="Confirm Password"
-                    value={newUserData.confirmPassword}
-                    onChange={validateInput}
                 />
-                <input
-                    type="submit"
-                    id="signup"
-                    value="Sign Up"
-                    className="active submitBtn"
-                />
-            </form>
-            <button
-                className="inactive submitBtn"
-                onClick={() => setRegister(0)}
-            >
-                Log In
-            </button>
-        </section>
+
+                <button type="submit">Submit</button>
+            </Form>
+        </Formik>
     );
 };
 
