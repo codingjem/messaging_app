@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import "./SignupPage.css";
-import { useState } from "react";
 import { useCreateUserMutation } from "../features/user/userApiSlice";
 
 import { Formik, Form } from "formik";
@@ -9,20 +8,26 @@ import MyTextInput from "../components/input_fields/MyTextInput";
 
 const SignupPage = () => {
     const [createUser, { data, error, isLoading }] = useCreateUserMutation();
+    if (data) {
+        console.log("DATA FROM BACKEND", data);
+    }
+    if (error) {
+        console.log("Error FROM BACKEND", error);
+    }
     return (
         <Formik
             initialValues={{
-                firstName: "",
-                lastName: "",
+                firstname: "",
+                lastname: "",
                 email: "",
                 password: "",
                 confirmPassword: "",
             }}
             validationSchema={Yup.object({
-                firstName: Yup.string()
+                firstname: Yup.string()
                     .max(15, "Must be 15 characters or less")
                     .required("Required"),
-                lastName: Yup.string()
+                lastname: Yup.string()
                     .max(20, "Must be 20 characters or less")
                     .required("Required"),
                 email: Yup.string()
@@ -37,8 +42,8 @@ const SignupPage = () => {
             })}
             onSubmit={async (values, { setSubmitting, resetForm }) => {
                 try {
-                    // await createUser(values).unwrap();
-                    console.log("VALUES", values);
+                    await createUser(values).unwrap();
+                    // console.log("VALUES", values);
                 } catch (err) {
                     console.error("Error", err);
                 } finally {
@@ -48,13 +53,13 @@ const SignupPage = () => {
         >
             <Form className="signup-form">
                 <MyTextInput
-                    name="firstName"
+                    name="firstname"
                     type="text"
                     placeholder="First Name"
                 />
 
                 <MyTextInput
-                    name="lastName"
+                    name="lastname"
                     type="text"
                     placeholder="Last Name"
                 />
