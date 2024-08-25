@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
+const usersModel = require("../models/usersModel");
 
 const createUser = async (req, res) => {
     const errors = validationResult(req);
@@ -18,7 +19,10 @@ const createUser = async (req, res) => {
             email,
             password: hashedPwd,
         };
-        res.status(200).json(newUser);
+        const result = await usersModel.createUser(newUser);
+        res.status(200).json({
+            message: `${result.firstname}'s account is created Successfully!`,
+        });
     } catch (err) {
         console.error(err);
     }
