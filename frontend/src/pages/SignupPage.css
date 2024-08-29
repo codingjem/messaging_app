@@ -1,7 +1,12 @@
 #login,
 #signup {
-    width: 300px;
-    margin: auto;
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    border: 10px solid var(--text-color);
+    border-radius: 20px;
+    margin: 200px auto;
 }
 form,
 button,
@@ -9,29 +14,55 @@ input {
     width: 100%;
     display: flex;
     flex-direction: column;
+    background-color: var(--background-color);
     font-size: 16px;
+    color: var(--text-color);
     padding: 5px 0;
     margin-bottom: 10px;
 }
 input:focus {
     outline: none;
 }
-.submitBtn {
+button {
+    padding: 10px;
+}
+.submit-btn {
+    align-items: center;
     border: none;
     border-radius: 5px;
-    align-items: center;
+    margin-top: 10px;
 }
 input[type="email"],
 input[type="password"],
 input[type="text"] {
+    font-size: 20px;
     border: none;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid var(--text-color);
 }
 .active {
-    background-color: green;
-    color: white;
+    background-color: var(--text-color);
+    color: var(--background-color);
 }
 .inactive {
     background-color: gray;
     color: white;
+}
+.error-message {
+    color: var(--error-message);
+    font-size: 14px;
+}
+h1 {
+    font-size: 25px;
+    color: var(--text-color);
+    text-align: center;
+}
+p {
+    color: var(--text-color);
+}
+
+@media (max-width: 700px) {
+    #login,
+    #signup {
+        width: 350px;
+    }
 }

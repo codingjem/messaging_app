@@ -13,7 +13,13 @@ export const userApiSlice = createApi({
                 body: newUser,
             }),
         }),
+        loginUser: builder.mutation(({ email, password }) => ({
+            url: "user/loginUser/",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: { email, password },
+        })),
     }),
 });
 
-export const { useCreateUserMutation } = userApiSlice;  
+export const { useCreateUserMutation, useLoginUserMutation } = userApiSlice;

@@ -10,7 +10,7 @@ const MyTextInput = ({ ...props }) => {
         <>
             <input className="text-input" {...field} {...props} />
             {meta.touched && meta.error ? (
-                <div className="error">{meta.error}</div>
+                <div className="error-message">{meta.error}</div>
             ) : null}
         </>
     );

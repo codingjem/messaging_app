@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SignupPage.css";
 import { useCreateUserMutation } from "../features/user/userApiSlice";
 
@@ -6,8 +7,18 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import MyTextInput from "../components/input_fields/MyTextInput";
 
+/* 
+NOTE!!!!
+
+1. If you click enter it should go to next input field
+2. Check if email already exists, validation should be on backend
+
+*/
+
 const SignupPage = () => {
     const [createUser, { data, error, isLoading }] = useCreateUserMutation();
+    const navigate = useNavigate();
+
     if (data) {
         console.log("DATA FROM BACKEND", data);
     }
@@ -15,7 +26,8 @@ const SignupPage = () => {
         console.log("Error FROM BACKEND", error);
     }
     return (
-        <>
+        <div id="signup">
+            <h1>Sign Up</h1>
             <Formik
                 initialValues={{
                     firstname: "",
@@ -27,19 +39,19 @@ const SignupPage = () => {
                 validationSchema={Yup.object({
                     firstname: Yup.string()
                         .max(15, "Must be 15 characters or less")
-                        .required("Required"),
+                        .required("First Name is required"),
                     lastname: Yup.string()
                         .max(20, "Must be 20 characters or less")
-                        .required("Required"),
+                        .required("Last Name is required"),
                     email: Yup.string()
                         .email("Invalid email address")
-                        .required("Required"),
+                        .required("Email is required"),
                     password: Yup.string()
                         .min(8, "Password must be at least 8 characters")
-                        .required("Required"),
+                        .required("Password is required"),
                     confirmPassword: Yup.string()
                         .oneOf([Yup.ref("password")], "Passwords must match")
-                        .required("Required"),
+                        .required("Confirmation password is required"),
                 })}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
                     try {
@@ -58,19 +70,16 @@ const SignupPage = () => {
                         type="text"
                         placeholder="First Name"
                     />
-
                     <MyTextInput
                         name="lastname"
                         type="text"
                         placeholder="Last Name"
                     />
-
                     <MyTextInput
                         name="email"
                         type="email"
                         placeholder="Email Address"
                     />
-
                     <MyTextInput
                         name="password"
                         type="password"
@@ -82,11 +91,19 @@ const SignupPage = () => {
                         placeholder="Confirm Password"
                     />
 
-                    <button type="submit">Submit</button>
+                    <button type="submit" className="submit-btn active">
+                        Create Account
+                    </button>
                 </Form>
             </Formik>
+            <p>
+                Already have an account?{" "}
+                <a className="form-links" onClick={() => navigate("/login")}>
+                    Login now
+                </a>
+            </p>
             {data && <div>{data.message}</div>}
-        </>
+        </div>
     );
 };
 
